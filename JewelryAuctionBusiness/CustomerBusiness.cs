@@ -9,7 +9,7 @@ namespace JewelryAuctionBusiness
     public class CustomerBusiness
     {
         private readonly UnitOfWork _unitOfWork;
-
+        
         public CustomerBusiness(UnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;

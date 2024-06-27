@@ -1,10 +1,11 @@
-﻿using BadmintonReservationData.Base;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using BadmintonReservationData.Base;
 
 namespace JewelryAuctionData.Entity
 {
-    public partial class Customer : BaseEntity
+    public partial class Customer: BaseEntity
     {
         public Customer()
         {
@@ -14,7 +15,7 @@ namespace JewelryAuctionData.Entity
             RequestAuctions = new HashSet<RequestAuction>();
         }
 
-        public int CustomerId { get; set; }
+        [Key]public int CustomerId { get; set; }
         public string? CustomerName { get; set; }
         public string? Phone { get; set; }
         public int? CompanyId { get; set; }

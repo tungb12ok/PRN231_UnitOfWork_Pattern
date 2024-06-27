@@ -1,5 +1,6 @@
 ﻿using BadmintonReservationData.Base;
 using JewelryAuctionData.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace JewelryAuctionData.Repository
 {
@@ -9,4 +10,5 @@ namespace JewelryAuctionData.Repository
         {
         }
     }
+
 }

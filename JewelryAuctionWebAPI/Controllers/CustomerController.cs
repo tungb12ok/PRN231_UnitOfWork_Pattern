@@ -1,55 +1,56 @@
 ﻿using JewelryAuctionBusiness;
 using JewelryAuctionData.Entity;
 using Microsoft.AspNetCore.Mvc;
-using System;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.OData.Formatter;
 
 namespace JewelryAuctionWebAPI.Controllers
 {
-    [Route("api/customers")]
-    [ApiController]
-    public class CustomerController : ControllerBase
+    public class CustomersController : ODataController
     {
         private readonly CustomerBusiness _customerBusiness;
 
-        public CustomerController(CustomerBusiness customerBusiness)
+        public CustomersController(CustomerBusiness customerBusiness)
         {
             _customerBusiness = customerBusiness;
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var result = await _customerBusiness.GetCustomerById(id);
-            return GenerateActionResult(result);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [EnableQuery]
+        public async Task<IActionResult> Get()
         {
             var result = await _customerBusiness.GetAllCustomers();
             return GenerateActionResult(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Customer customer)
+        [EnableQuery]
+        public async Task<IActionResult> Get([FromODataUri] int key)
+        {
+            var result = await _customerBusiness.GetCustomerById(key);
+            return GenerateActionResult(result);
+        }
+
+        public async Task<IActionResult> Post([FromBody] Customer customer)
         {
             var result = await _customerBusiness.CreateCustomer(customer);
             return GenerateActionResult(result);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Customer customer)
+        public async Task<IActionResult> Put([FromODataUri] int key, [FromBody] Customer customer)
         {
-            customer.CustomerId = id; // Ensure the ID is set correctly
+            if (key != customer.CustomerId)
+            {
+                return BadRequest("The ID in the URL does not match the ID in the entity.");
+            }
+
             var result = await _customerBusiness.UpdateCustomer(customer);
             return GenerateActionResult(result);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete([FromODataUri] int key)
         {
-            var result = await _customerBusiness.DeleteCustomer(id);
+            var result = await _customerBusiness.DeleteCustomer(key);
             return GenerateActionResult(result);
         }
 
@@ -62,7 +63,7 @@ namespace JewelryAuctionWebAPI.Controllers
                 case 404:
                     return NotFound(result);
                 case 200:
-                    return Ok(result);
+                    return Ok(result.Data);
                 default:
                     return StatusCode(500, "An internal server error occurred. Please try again later.");
             }

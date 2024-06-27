@@ -1,6 +1,7 @@
-﻿using BadmintonReservationData.Base;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using BadmintonReservationData.Base;
 
 namespace JewelryAuctionData.Entity
 {
@@ -11,13 +12,13 @@ namespace JewelryAuctionData.Entity
             Payments = new HashSet<Payment>();
         }
 
-        public int AuctionResultId { get; set; }
+        [Key] public int AuctionResultId { get; set; }
         public int? AuctionId { get; set; }
         public int? BidderId { get; set; }
         public decimal? Amount { get; set; }
         public DateTime? TransactionTime { get; set; }
         public decimal? FinalPrice { get; set; }
-
+        
         public virtual AuctionSection? Auction { get; set; }
         public virtual Bidder? Bidder { get; set; }
         public virtual ICollection<Payment> Payments { get; set; }

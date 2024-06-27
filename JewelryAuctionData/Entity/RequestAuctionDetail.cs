@@ -1,17 +1,18 @@
-﻿using BadmintonReservationData.Base;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using BadmintonReservationData.Base;
 
 namespace JewelryAuctionData.Entity
 {
-    public partial class RequestAuctionDetail : BaseEntity
+    public partial class RequestAuctionDetail: BaseEntity
     {
         public RequestAuctionDetail()
         {
             AuctionSections = new HashSet<AuctionSection>();
         }
 
-        public int RequestDetailId { get; set; }
+        [Key] public int RequestDetailId { get; set; }
         public int? RequestId { get; set; }
         public int? CustomerId { get; set; }
         public int? JewelryId { get; set; }

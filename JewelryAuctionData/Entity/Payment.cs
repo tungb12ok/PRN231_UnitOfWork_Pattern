@@ -1,12 +1,13 @@
-﻿using BadmintonReservationData.Base;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using BadmintonReservationData.Base;
 
 namespace JewelryAuctionData.Entity
 {
     public partial class Payment : BaseEntity
     {
-        public int PaymentId { get; set; }
+        [Key] public int PaymentId { get; set; }
         public int? AuctionResultId { get; set; }
         public string? PaymentMethod { get; set; }
         public decimal? TotalPrice { get; set; }

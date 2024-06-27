@@ -44,9 +44,7 @@ namespace JewelryAuctionData.Entity
             {
                 entity.ToTable("AuctionResult");
 
-                entity.Property(e => e.AuctionResultId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("AuctionResultID");
+                entity.Property(e => e.AuctionResultId).HasColumnName("AuctionResultID");
 
                 entity.Property(e => e.Amount).HasColumnType("decimal(10, 2)");
 
@@ -76,9 +74,7 @@ namespace JewelryAuctionData.Entity
 
                 entity.ToTable("AuctionSection");
 
-                entity.Property(e => e.AuctionId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("AuctionID");
+                entity.Property(e => e.AuctionId).HasColumnName("AuctionID");
 
                 entity.Property(e => e.BidderId).HasColumnName("BidderID");
 
@@ -116,9 +112,7 @@ namespace JewelryAuctionData.Entity
             {
                 entity.ToTable("Bidder");
 
-                entity.Property(e => e.BidderId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("BidderID");
+                entity.Property(e => e.BidderId).HasColumnName("BidderID");
 
                 entity.Property(e => e.CurrentBidPrice).HasColumnType("decimal(10, 2)");
 
@@ -134,9 +128,7 @@ namespace JewelryAuctionData.Entity
             {
                 entity.ToTable("Company");
 
-                entity.Property(e => e.CompanyId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("CompanyID");
+                entity.Property(e => e.CompanyId).HasColumnName("CompanyID");
 
                 entity.Property(e => e.Address).HasMaxLength(255);
 
@@ -151,9 +143,7 @@ namespace JewelryAuctionData.Entity
             {
                 entity.ToTable("Customer");
 
-                entity.Property(e => e.CustomerId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("CustomerID");
+                entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
 
                 entity.Property(e => e.CompanyId).HasColumnName("CompanyID");
 
@@ -173,9 +163,7 @@ namespace JewelryAuctionData.Entity
             {
                 entity.ToTable("Jewelry");
 
-                entity.Property(e => e.JewelryId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("JewelryID");
+                entity.Property(e => e.JewelryId).HasColumnName("JewelryID");
 
                 entity.Property(e => e.Discription).HasMaxLength(255);
 
@@ -186,9 +174,7 @@ namespace JewelryAuctionData.Entity
             {
                 entity.ToTable("Payment");
 
-                entity.Property(e => e.PaymentId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("PaymentID");
+                entity.Property(e => e.PaymentId).HasColumnName("PaymentID");
 
                 entity.Property(e => e.AuctionResultId).HasColumnName("AuctionResultID");
 
@@ -233,9 +219,7 @@ namespace JewelryAuctionData.Entity
 
                 entity.ToTable("RequestAuction");
 
-                entity.Property(e => e.RequestId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("RequestID");
+                entity.Property(e => e.RequestId).HasColumnName("RequestID");
 
                 entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
 
@@ -257,9 +241,7 @@ namespace JewelryAuctionData.Entity
                 entity.HasKey(e => e.RequestDetailId)
                     .HasName("PK__RequestA__DC528B7041C53479");
 
-                entity.Property(e => e.RequestDetailId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("RequestDetailID");
+                entity.Property(e => e.RequestDetailId).HasColumnName("RequestDetailID");
 
                 entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
 

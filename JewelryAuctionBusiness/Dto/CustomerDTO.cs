@@ -9,6 +9,7 @@ namespace JewelryAuctionData.Dto
 {
     public class CustomerDTO
     {
+        [Key]
         public int CustomerId { get; set; }
 
         [Required(ErrorMessage = "Customer name is required")]

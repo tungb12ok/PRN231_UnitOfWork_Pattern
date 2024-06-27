@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace JewelryAuctionData.Repository
 {
-    public class AuctionSectionRepository : GenericRepository<AuctionResult>
+    public class AuctionSectionRepository : GenericRepository<AuctionSection>
     {
         public AuctionSectionRepository(UnitOfWork unitOfWork) : base(unitOfWork)
         {
