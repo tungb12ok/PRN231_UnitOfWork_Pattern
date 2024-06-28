@@ -13,4 +13,6 @@ public class AuctionSectionDto
     public decimal? InitialPrice { get; set; }
     public int? BidderID { get; set; }
     public int? RequestDetailID { get; set; }
+    public BidderDto  BidderDto { get; set; }
 }
+

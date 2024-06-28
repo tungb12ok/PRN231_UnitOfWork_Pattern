@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using JewelryAuctionData.Entity;
 
 namespace JewelryAuctionData.Dto
 {
@@ -19,9 +21,16 @@ namespace JewelryAuctionData.Dto
         public string Phone { get; set; }
 
         public int? CompanyId { get; set; }
+        public CompanyDTO Company  { get; set; }
 
         [Required(ErrorMessage = "Email address is required")]
         [EmailAddress(ErrorMessage = "Invalid email address")]
         public string Email { get; set; }
+    }
+
+    public class CompanyDTO
+    {
+        public int CompanyId { get; set; }
+        public string CompanyName { get; set; }
     }
 }

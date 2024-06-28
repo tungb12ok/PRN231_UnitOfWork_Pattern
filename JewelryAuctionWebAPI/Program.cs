@@ -1,4 +1,6 @@
+using System.Text.Json.Serialization;
 using JewelryAuctionBusiness;
+using JewelryAuctionBusiness.AutoMap;
 using JewelryAuctionBusiness.Dto;
 using JewelryAuctionData;
 using JewelryAuctionData.Dto;
@@ -32,7 +34,6 @@ builder.Services.AddScoped<PaymentBusiness>();
 builder.Services.AddScoped<AuctionBusiness>();
 builder.Services.AddScoped<BidderBusiness>();
 // Add background services
-// Add background services
 builder.Services.AddHostedService<AuctionStatusUpdater>();
 // Configure OData
 builder.Services.AddControllers().AddOData(opt =>
@@ -45,6 +46,13 @@ builder.Services.AddControllers().AddOData(opt =>
         .SetMaxTop(100);
     opt.AddRouteComponents("odata", GetEdmModel());
 });
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+        options.JsonSerializerOptions.WriteIndented = true;
+    });
 
 var app = builder.Build();
 
@@ -69,9 +77,12 @@ IEdmModel GetEdmModel()
 {
     var builder = new ODataConventionModelBuilder();
     builder.EntitySet<AuctionResult>("AuctionResults");
-    builder.EntitySet<Customer>("Customers");
+    builder.EntitySet<CustomerDTO>("Customers");
     builder.EntitySet<AuctionSection>("Auction");
     builder.EntitySet<Bidder>("Bidder");
     builder.EntitySet<Payment>("Payments");
+    builder.EntitySet<Company>("Companies");
+
     return builder.GetEdmModel();
 }
+

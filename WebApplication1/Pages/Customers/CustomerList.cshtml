@@ -1,0 +1,138 @@
+@page
+@model WebApplication1.Pages.Customers.CustomerListModel
+
+@{
+ViewData["Title"] = "Customer List";
+}
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet" />
+
+<div class="container mt-5">
+    <h2>Customer List</h2>
+
+    <!-- Button to Open the Modal for Adding New Customer -->
+    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal">
+        Add New Customer
+    </button>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var customer in Model.Customers)
+        {
+        <tr>
+            <td>@customer.CustomerName</td>
+            <td>@customer.Email</td>
+            <td>@customer.Phone</td>
+            <td>
+                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal" onclick="setEditModal('@customer.CustomerId', '@customer.CustomerName', '@customer.Email', '@customer.Phone', '@customer.CompanyId')">Edit</button>
+                <form method="post" class="d-inline">
+                    <input type="hidden" name="id" value="@customer.CustomerId" />
+                    <button type="submit" class="btn btn-danger" asp-page-handler="Delete" asp-route-id="@customer.CustomerId">Delete</button>
+                </form>
+            </td>
+        </tr>
+        }
+        </tbody>
+    </table>
+
+    <!-- Create Customer Modal -->
+    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createModalLabel">Add New Customer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" asp-page-handler="Create">
+                        <div class="mb-3">
+                            <label asp-for="NewCustomer.CustomerName" class="form-label"></label>
+                            <input asp-for="NewCustomer.CustomerName" class="form-control" />
+                            <span asp-validation-for="NewCustomer.CustomerName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="NewCustomer.Email" class="form-label"></label>
+                            <input asp-for="NewCustomer.Email" class="form-control" />
+                            <span asp-validation-for="NewCustomer.Email" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="NewCustomer.Phone" class="form-label"></label>
+                            <input asp-for="NewCustomer.Phone" class="form-control" />
+                            <span asp-validation-for="NewCustomer.Phone" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="NewCustomer.CompanyId" class="form-label"></label>
+                            <select asp-for="NewCustomer.CompanyId" class="form-select" asp-items="Model.Companies">
+                                <option value="">-- Select Company --</option>
+                            </select>
+                            <span asp-validation-for="NewCustomer.CompanyId" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Customer Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Customer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" asp-page-handler="Update">
+                        <input type="hidden" asp-for="CustomerVM.CustomerId" id="editCustomerId" />
+                        <div class="mb-3">
+                            <label asp-for="CustomerVM.CustomerName" class="form-label"></label>
+                            <input asp-for="CustomerVM.CustomerName" class="form-control" id="editCustomerName" />
+                            <span asp-validation-for="CustomerVM.CustomerName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="CustomerVM.Email" class="form-label"></label>
+                            <input asp-for="CustomerVM.Email" class="form-control" id="editCustomerEmail" />
+                            <span asp-validation-for="CustomerVM.Email" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="CustomerVM.Phone" class="form-label"></label>
+                            <input asp-for="CustomerVM.Phone" class="form-control" id="editCustomerPhone" />
+                            <span asp-validation-for="CustomerVM.Phone" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="CustomerVM.CompanyId" class="form-label"></label>
+                            <select asp-for="CustomerVM.CompanyId" class="form-select" id="editCustomerCompany" asp-items="Model.Companies">
+                                <option value="">-- Select Company --</option>
+                            </select>
+                            <span asp-validation-for="CustomerVM.CompanyId" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+<script>
+    function setEditModal(id, name, email, phone, companyId) {
+        document.getElementById('editCustomerId').value = id;
+        document.getElementById('editCustomerName').value = name;
+        document.getElementById('editCustomerEmail').value = email;
+        document.getElementById('editCustomerPhone').value = phone;
+        document.getElementById('editCustomerCompany').value = companyId;
+    }
+</script>
+}
