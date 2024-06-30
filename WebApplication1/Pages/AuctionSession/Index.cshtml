@@ -26,9 +26,7 @@
             <td>@auction.Status</td>
             <td>@auction.InitialPrice</td>
             <td>
-                <form action="get">
-                    <button type="submit" class="form-control btn btn-primary"> Bid </button>
-                </form>
+                    <a href="AuctionSession/AuctionSesionDetail?id=@auction.AuctionID" class="form-control btn btn-secondary">Bid</a>
             </td>
         </tr>
     }
