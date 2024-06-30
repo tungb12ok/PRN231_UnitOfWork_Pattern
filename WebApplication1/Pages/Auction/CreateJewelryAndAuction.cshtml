@@ -1,0 +1,38 @@
+@page
+@model WebApplication1.Pages.Customers.Auction.CreateJewelryAndAuctionModel
+
+
+<h2>Create Jewelry and Auction</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="JewelryAndAuction.JewelryName"></label>
+        <input asp-for="JewelryAndAuction.JewelryName" class="form-control" />
+        <span asp-validation-for="JewelryAndAuction.JewelryName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="JewelryAndAuction.Discription"></label>
+        <textarea asp-for="JewelryAndAuction.Discription" class="form-control"></textarea>
+        <span asp-validation-for="JewelryAndAuction.Discription" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="JewelryAndAuction.CustomerID"></label>
+        <input asp-for="JewelryAndAuction.CustomerID" class="form-control" />
+        <span asp-validation-for="JewelryAndAuction.CustomerID" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="JewelryAndAuction.Price"></label>
+        <input asp-for="JewelryAndAuction.Price" class="form-control" />
+        <span asp-validation-for="JewelryAndAuction.Price" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="JewelryAndAuction.Quantity"></label>
+        <input asp-for="JewelryAndAuction.Quantity" class="form-control" />
+        <span asp-validation-for="JewelryAndAuction.Quantity" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

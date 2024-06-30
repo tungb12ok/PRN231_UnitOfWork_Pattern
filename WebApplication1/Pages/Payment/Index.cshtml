@@ -1,0 +1,35 @@
+@page
+@model WebApplication1.Pages.Payment.IndexModel
+
+<h1>Payments</h1>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Payment ID</th>
+        <th>Total Price</th>
+        <th>Payment Method</th>
+        <th>Payment Time</th>
+        <th>Payment Status</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var payment in Model.Payments)
+    {
+        <tr>
+            <td>@payment.PaymentId</td>
+            <td>@payment.TotalPrice</td>
+            <td>@payment.PaymentMethod</td>
+            <td>@payment.PaymentTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+            <td>@payment.PaymentStatus</td>
+            <td>
+                <form method="post">
+                    <input type="text" hidden="" name="id" value="@payment.PaymentId" />
+                    <button type="submit" class="btn btn-primary">Accept</button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

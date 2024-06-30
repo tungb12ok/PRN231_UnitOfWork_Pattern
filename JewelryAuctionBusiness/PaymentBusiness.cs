@@ -1,3 +1,4 @@
+using AutoMapper;
 using JewelryAuctionBusiness.Dto;
 using JewelryAuctionData;
 using JewelryAuctionData.Entity;
@@ -7,10 +8,12 @@ namespace JewelryAuctionBusiness;
 public class PaymentBusiness
 {
     private readonly UnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
-    public PaymentBusiness(UnitOfWork unitOfWork)
+    public PaymentBusiness(UnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
     // Method to record a new payment
@@ -68,12 +71,14 @@ public class PaymentBusiness
         try
         {
             var payments = await _unitOfWork.PaymentRepository.GetAllAsync();
+            var a = _mapper.Map<List<PaymentDto>>(payments);
+
             if (payments == null || payments.Count == 0)
             {
                 return new BusinessResult(404, "No payments found.");
             }
 
-            return new BusinessResult(200, "Payments retrieved successfully.", payments);
+            return new BusinessResult(200, "Payments retrieved successfully.", a);
         }
         catch (Exception ex)
         {
@@ -86,12 +91,14 @@ public class PaymentBusiness
         try
         {
             var payment = await _unitOfWork.PaymentRepository.GetByIdAsync(paymentId);
+            var a = _mapper.Map<PaymentDto>(payment);
+
             if (payment == null)
             {
                 return new BusinessResult(404, "Payment not found.");
             }
 
-            return new BusinessResult(200, "Payment retrieved successfully.", payment);
+            return new BusinessResult(200, "Payment retrieved successfully.", a);
         }
         catch (Exception ex)
         {

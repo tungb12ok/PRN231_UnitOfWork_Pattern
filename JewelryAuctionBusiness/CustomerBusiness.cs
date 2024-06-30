@@ -45,15 +45,15 @@ namespace JewelryAuctionBusiness
         {
             try
             {
-                var customers = await _unitOfWork
+                var companies = await _unitOfWork
                     .CompanyRepository
                     .GetAllAsync();
-
-                if (customers == null || customers.Count == 0)
+                var results = _mapper.Map<List<CompanyDTO>>(companies);
+                if (companies == null || companies.Count == 0)
                 {
                     return new BusinessResult(404, "No customers found.");
                 }
-                return new BusinessResult(200, "Successfully retrieved customers.", customers);
+                return new BusinessResult(200, "Successfully retrieved customers.", results);
             }
             catch (Exception ex)
             {
@@ -95,7 +95,7 @@ namespace JewelryAuctionBusiness
             }
             catch (Exception ex)
             {
-                await _unitOfWork.RollbackTransactionAsync();
+                _unitOfWork.RollbackTransactionAsync();
                 return new BusinessResult(500, $"Failed to create customer: {ex.Message}");
             }
         }
@@ -121,7 +121,7 @@ namespace JewelryAuctionBusiness
             }
             catch (Exception ex)
             {
-                await _unitOfWork.RollbackTransactionAsync();
+                _unitOfWork.RollbackTransactionAsync();
                 return new BusinessResult(500, $"Failed to update customer with ID {customerDto.CustomerId}: {ex.Message}");
             }
         }
@@ -145,7 +145,7 @@ namespace JewelryAuctionBusiness
             }
             catch (Exception ex)
             {
-                await _unitOfWork.RollbackTransactionAsync();
+                _unitOfWork.RollbackTransactionAsync();
                 return new BusinessResult(500, $"Failed to delete customer with ID {customerId}: {ex.Message}");
             }
         }

@@ -1,0 +1,54 @@
+@page
+@model WebApplication1.Pages.Customers.Auction.ApproveAuctionModel
+@{
+    ViewData["Title"] = "Approve Auction Requests";
+}
+
+<h2>Approve Auction Requests</h2>
+
+@if (Model.AuctionRequests != null && Model.AuctionRequests.Count > 0)
+{
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Request ID</th>
+            <th>Customer Name</th>
+            <th>Jewelry Name</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var request in Model.AuctionRequests)
+        {
+            <tr>
+                <td>@request.RequestID</td>
+                <td>@request.CustomerName</td>
+                <td>@request.JewelryName</td>
+                <td>@request.Price</td>
+                <td>@request.Quantity</td>
+                <td>@request.Status</td>
+                <td>
+                    @if (!"Rejected".Equals(@request.Status))
+                    {
+                        <form method="post" asp-page-handler="Approve">
+                            <input type="hidden" name="RequestID" value="@request.RequestID"/>
+                            <button type="submit" class="btn btn-success">Approve</button>
+                        </form>
+                        <form method="post" asp-page-handler="Reject">
+                            <input type="hidden" name="RequestID" value="@request.RequestID"/>
+                            <button type="submit" class="btn btn-danger">Reject</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No auction requests found.</p>
+}

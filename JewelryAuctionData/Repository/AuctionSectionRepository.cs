@@ -22,10 +22,11 @@ namespace JewelryAuctionData.Repository
                 .Include(x => x.RequestDetail)
                 .ToListAsync();
         }
-        public async Task<AuctionSection> GetByIdAsync(int key)
+        public async Task<AuctionSection?> GetByIdAsync(int key)
         {
             return await _dbSet
                 .Include(x => x.Bidder)
+                .ThenInclude(x => x!.Customer)
                 .Include(x => x.Jewelry)
                 .Include(x => x.RequestDetail)
                 .FirstOrDefaultAsync(c => c.AuctionId == key);

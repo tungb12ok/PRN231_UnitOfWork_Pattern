@@ -14,53 +14,57 @@ public class BidderBusiness
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IBusinessResult> PlaceBid(BidderDto bidderDto)
+    public async Task<IBusinessResult> PlaceBid(BidderAuction bidderDto)
     {
+        await _unitOfWork.BeginTransactionAsync();
+
         int auctionId = bidderDto.AuctionId;
-        decimal newBidAmount = bidderDto.Amount;
-        
-            
+        decimal newBidAmount = bidderDto.CurrentBidPrice ?? 0;
+
+        // Retrieve auction section
         var auctionSection = await _unitOfWork.AuctionSectionRepository.GetByIdAsync(auctionId);
-        
-        var bidderCurent = auctionSection.Bidder;
-        
+
         if (auctionSection == null || auctionSection.EndTime < DateTime.Now || auctionSection.Status != "Active")
         {
             return new BusinessResult(400, "Auction is not active or does not exist.");
         }
 
-        // Assuming InitialPrice is used to track the highest bid
         if (newBidAmount <= auctionSection.InitialPrice)
+        {
+            return new BusinessResult(400, "New bid must be higher than the Initial Price.");
+        }
+
+        if (auctionSection.Bidder != null && newBidAmount <= auctionSection.Bidder.CurrentBidPrice)
         {
             return new BusinessResult(400, "New bid must be higher than the current highest bid.");
         }
 
-        _unitOfWork.BeginTransactionAsync();
-        // Update the highest bid in the AuctionSection
-        auctionSection.InitialPrice = newBidAmount;
-        _unitOfWork.AuctionSectionRepository.Update(auctionSection);
-
-        // Assuming we track bids in some way in the Bidder table
-        
-        if (bidderCurent == null)
+        try
         {
-            // If no existing bid, create new
-            bidderCurent = new Bidder
+            // Create new bidder record
+            var bidder = new Bidder
             {
-                CustomerId = bidderDto.CustomerId,
-                CurrentBidPrice = newBidAmount
+                CurrentBidPrice = newBidAmount,
+                CustomerId = bidderDto.CustomerId
             };
-            _unitOfWork.BidderRepository.Create(bidderCurent);
-        }
-        else
-        {
-            bidderCurent.CurrentBidPrice = newBidAmount;
-            _unitOfWork.BidderRepository.Update(bidderCurent);
-        }
 
-        await _unitOfWork.CommitTransactionAsync();
-        return new BusinessResult(200, "Bid placed successfully.");
+            await _unitOfWork.BidderRepository.CreateAsync(bidder);
+            await _unitOfWork.CommitTransactionAsync(); 
+
+            auctionSection.BidderId = bidder.BidderId; 
+            auctionSection.InitialPrice = newBidAmount;
+            _unitOfWork.AuctionSectionRepository.Update(auctionSection);
+
+            await _unitOfWork.CommitTransactionAsync();
+            return new BusinessResult(200, "Bid placed successfully.");
+        }
+        catch (Exception ex)
+        {
+            await _unitOfWork.RollbackTransactionAsync();
+            return new BusinessResult(500, $"An error occurred while placing the bid: {ex.Message}");
+        }
     }
+
     public async Task<IBusinessResult> GetBidderByCustomerId(int customerId)
     {
         try

@@ -16,7 +16,7 @@ public class BidderController : ControllerBase
     }
 
     [HttpPost("place-bid")]
-    public async Task<IActionResult> PlaceBid([FromBody] BidderDto bidderDto)
+    public async Task<IActionResult> PlaceBid([FromBody] BidderAuction bidderDto)
     {
         var result = await _bidderBusiness.PlaceBid(bidderDto);
         return GenerateActionResult(result);
@@ -37,6 +37,10 @@ public class BidderController : ControllerBase
             case 404:
                 return NotFound(result);
             case 200:
+                if (result.Data == null)
+                {
+                    return Ok(result);
+                }
                 return Ok(result.Data);
             default:
                 return StatusCode(500, "An internal server error occurred. Please try again later.");

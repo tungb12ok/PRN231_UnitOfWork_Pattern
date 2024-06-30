@@ -21,16 +21,19 @@ namespace JewelryAuctionData.Dto
         public string Phone { get; set; }
 
         public int? CompanyId { get; set; }
-        public CompanyDTO Company  { get; set; }
+        public CompanyDTO? Company  { get; set; }
 
         [Required(ErrorMessage = "Email address is required")]
         [EmailAddress(ErrorMessage = "Invalid email address")]
         public string Email { get; set; }
     }
-
     public class CompanyDTO
     {
+        [Key]
         public int CompanyId { get; set; }
-        public string CompanyName { get; set; }
+        public string? CompanyName { get; set; }
+        public string? Address { get; set; }
+        public string? Discription { get; set; }
+        public string? Email { get; set; }
     }
 }

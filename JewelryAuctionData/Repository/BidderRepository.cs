@@ -9,6 +9,7 @@ namespace JewelryAuctionData.Repository
         public BidderRepository(UnitOfWork unitOfWork) : base(unitOfWork)
         {
         }
+        
     }
 
 }

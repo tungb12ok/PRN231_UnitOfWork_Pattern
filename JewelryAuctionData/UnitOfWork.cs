@@ -1,6 +1,7 @@
 ﻿using JewelryAuctionData.Entity;
 using JewelryAuctionData.Repository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Threading.Tasks;
 
@@ -26,7 +27,7 @@ namespace JewelryAuctionData
 
         public UnitOfWork(Net1711_231_7_JewelryAuctionContext context)
         {
-            _context = new Net1711_231_7_JewelryAuctionContext();
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         internal Net1711_231_7_JewelryAuctionContext Context => _context;
@@ -58,42 +59,44 @@ namespace JewelryAuctionData
         public RequestAuctionDetailsRepository RequestAuctionDetailsRepository =>
             _requestAuctionDetailsRepository ??= new RequestAuctionDetailsRepository(this);
 
-        public bool IsTransaction => isTransaction;
-
+        public bool IsTransaction
+        {
+            get
+            {
+                return this.isTransaction;
+            }
+        }
         public async Task BeginTransactionAsync()
         {
-            if (isTransaction)
+            if (this.isTransaction)
             {
-                throw new InvalidOperationException(ErrorAlreadyOpenTransaction);
+                throw new Exception(ErrorAlreadyOpenTransaction);
             }
 
             isTransaction = true;
-            await _context.Database.BeginTransactionAsync();
         }
 
         public async Task CommitTransactionAsync()
         {
-            if (!isTransaction)
+            if (!this.isTransaction)
             {
-                throw new InvalidOperationException(ErrorNotOpenTransaction);
+                throw new Exception(ErrorNotOpenTransaction);
             }
 
-            await _context.SaveChangesAsync();
-            await _context.Database.CurrentTransaction.CommitAsync();
-            isTransaction = false;
+            await this._context.SaveChangesAsync().ConfigureAwait(false);
+            this.isTransaction = false;
         }
 
         public async Task RollbackTransactionAsync()
         {
-            if (!isTransaction)
+            if (!this.isTransaction)
             {
-                throw new InvalidOperationException(ErrorNotOpenTransaction);
+                throw new Exception(ErrorNotOpenTransaction);
             }
-             
-            await _context.Database.CurrentTransaction.RollbackAsync();
-            isTransaction = false;
 
-            foreach (var entry in _context.ChangeTracker.Entries())
+            this.isTransaction = false;
+
+            foreach (var entry in this._context.ChangeTracker.Entries())
             {
                 entry.State = EntityState.Detached;
             }
@@ -102,14 +105,10 @@ namespace JewelryAuctionData
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)
-            {
                 if (disposing)
-                {
-                    _context.Dispose();
-                }
+                    this._context.Dispose();
 
-                _disposed = true;
-            }
+            _disposed = true;
         }
 
         public void Dispose()

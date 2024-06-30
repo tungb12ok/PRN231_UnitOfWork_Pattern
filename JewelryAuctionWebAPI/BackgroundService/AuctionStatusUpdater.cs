@@ -65,7 +65,7 @@ namespace JewelryAuctionWebAPI.BackgroundService
                     }
                     catch
                     {
-                        await unitOfWork.RollbackTransactionAsync();
+                        unitOfWork.RollbackTransactionAsync();
                         _logger.LogError("Failed to update expired auction sections. Transaction rolled back.");
                         throw;
                     }

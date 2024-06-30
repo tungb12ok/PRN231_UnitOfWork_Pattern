@@ -49,14 +49,14 @@ public class RegisterCustomerModel : PageModel
     private async Task LoadCompaniesAsync()
     {
         var httpClient = _clientFactory.CreateClient("MyApi");
-        var response = await httpClient.GetStringAsync("Companies");
+        var response = await httpClient.GetStringAsync("odata/Companies");
 
         var companiesJson = JsonDocument.Parse(response);
-        var companies = companiesJson.RootElement.GetProperty("$values").EnumerateArray()
+        var companies = companiesJson.RootElement.GetProperty("value").EnumerateArray()
             .Select(company => new CompanyVM
             {
-                CompanyId = company.GetProperty("companyId").GetInt32(),
-                CompanyName = company.GetProperty("companyName").GetString()
+                CompanyId = company.GetProperty("CompanyId").GetInt32(),
+                CompanyName = company.GetProperty("CompanyName").GetString()
             }).ToList();
 
         Companies = companies.Select(c => new SelectListItem

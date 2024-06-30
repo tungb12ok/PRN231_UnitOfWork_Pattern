@@ -6,11 +6,10 @@ using Microsoft.AspNetCore.OData.Routing.Controllers;
 using System.Threading.Tasks;
 using JewelryAuctionData.Dto;
 using Microsoft.AspNetCore.OData.Formatter;
-using NuGet.Protocol;
 
 namespace JewelryAuctionWebAPI.Controllers
 {
-    public class CustomersController : ControllerBase
+    public class CustomersController : ODataController
     {
         private readonly CustomerBusiness _customerBusiness;
 
@@ -32,20 +31,21 @@ namespace JewelryAuctionWebAPI.Controllers
             var result = await _customerBusiness.GetCustomerById(key);
             return GenerateActionResult(result);
         }
-        [HttpGet("Companies")]
+
+        [HttpGet("odata/Companies")]
         public async Task<IActionResult> GetCompany()
         {
             var result = await _customerBusiness.GetAllCompany();
             return GenerateActionResult(result);
         }
-        
+
         public async Task<IActionResult> Post([FromBody] CustomerDTO customer)
         {
             var result = await _customerBusiness.CreateCustomer(customer);
             return GenerateActionResult(result);
         }
 
-        public async Task<IActionResult> Put([FromODataUri] int key, [FromBody] CustomerDTO customer)
+        public async Task<IActionResult> Put(int key, [FromBody] CustomerDTO customer)
         {
             if (key != customer.CustomerId)
             {

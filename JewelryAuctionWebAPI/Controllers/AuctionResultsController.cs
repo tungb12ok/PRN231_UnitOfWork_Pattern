@@ -1,59 +1,30 @@
 using JewelryAuctionBusiness;
-using JewelryAuctionData.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using JewelryAuctionBusiness.Dto;
 using Microsoft.AspNetCore.OData.Formatter;
 
 namespace JewelryAuctionWebAPI.Controllers
 {
-    public class AuctionResultsController : ODataController
+    public class AuctionResultsController : ControllerBase
     {
-        private readonly RequestAuctionBusiness _auctionBusiness;
+        private readonly AuctionResultBusiness _auctionResultBusiness;
 
-        public AuctionResultsController(RequestAuctionBusiness business)
+        public AuctionResultsController(AuctionResultBusiness auctionResultBusiness)
         {
-            _auctionBusiness = business;
+            _auctionResultBusiness = auctionResultBusiness;
         }
-
         [EnableQuery]
         public async Task<IActionResult> Get()
         {
-            var result = await _auctionBusiness.GetAllRequestAuctions();
+            var result = await _auctionResultBusiness.GetAllAuctionResultsAsync();
             return GenerateActionResult(result);
         }
-
         [EnableQuery]
-        public async Task<IActionResult> Get([FromODataUri] int key)
+        public async Task<IActionResult> Get(int key)
         {
-            var result = await _auctionBusiness.GetRequestAuctionById(key);
-            return GenerateActionResult(result);
-        }
-
-        [HttpPost("CreateJewelryAndAuction")]
-        public async Task<IActionResult> CreateJewelryAndAuction([FromBody] CreateJewelryAndAuctionDto dto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var result = await _auctionBusiness.CreateJewelryAndRequestAuction(dto.Jewelry, dto.CustomerId);
-            return GenerateActionResult(result);
-        }
-
-        [HttpPost("ApproveAuction")]
-        public async Task<IActionResult> ApproveAuction([FromBody] RequestAuctionDetailsDto detailsDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var result = await _auctionBusiness.ApproveRequestAuction(detailsDto, true);
+            var result = await _auctionResultBusiness.GetAuctionResultByIdAsync(key);
             return GenerateActionResult(result);
         }
 
@@ -68,7 +39,7 @@ namespace JewelryAuctionWebAPI.Controllers
                 case 200:
                     return Ok(result.Data);
                 default:
-                    return StatusCode(500, result.Message);
+                    return StatusCode(500, "An internal server error occurred. Please try again later.");
             }
         }
     }

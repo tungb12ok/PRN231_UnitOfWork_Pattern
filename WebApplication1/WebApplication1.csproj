@@ -10,4 +10,9 @@
       <ProjectReference Include="..\JewelryAuctionWebAPI\JewelryAuctionWebAPI.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Pages\Customers\Auction\ApproveAuction.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Customers\Auction\CreateJewelryAndAuction.cshtml" />
+    </ItemGroup>
+
 </Project>

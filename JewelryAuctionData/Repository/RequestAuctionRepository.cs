@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace JewelryAuctionData.Repository
 {
@@ -12,6 +13,13 @@ namespace JewelryAuctionData.Repository
     {
         public RequestAuctionRepository(UnitOfWork unitOfWork) : base(unitOfWork)
         {
+        }
+
+        public async Task<List<RequestAuction>> GetAllAsync()
+        {
+            return await _dbSet.Include(x => x.Jewelry)
+                .Include(x => x.Customer)
+                .ToListAsync();
         }
     }
 }

@@ -1,0 +1,112 @@
+@page
+@using JewelryAuctionBusiness.Dto
+@model WebApplication1.Pages.AuctionSession.AuctionSesionDetailModel
+@{
+    ViewData["Title"] = "Auction Details";
+}
+
+<h2>Auction Details</h2>
+
+<div class="auction-details">
+    <div class="section">
+        <h3>Jewelry Information</h3>
+        <p>
+            <strong>Name:</strong> @Model.Auction.JewelryDto.JewelryName
+        </p>
+        <p>
+            <strong>Description:</strong> @Model.Auction.JewelryDto.Discription
+        </p>
+    </div>
+
+    <div class="section">
+        <h3>Auction Information</h3>
+        <p>
+            <strong>Start Time:</strong> @Model.Auction.StartTime.ToString("yyyy-MM-dd HH:mm")
+        </p>
+        <p>
+            <strong>End Time:</strong> @Model.Auction.EndTime.ToString("yyyy-MM-dd HH:mm")
+        </p>
+        <p>
+            <strong>Status:</strong> @Model.Auction.Status
+        </p>
+        <p><strong>Initial Price:</strong> $@Model.Auction.InitialPrice</p>
+        <p><strong>Highest Bid:</strong> $@Model.Auction.BidderDto.CurrentBidPrice</p>
+    </div>
+
+    <div class="section">
+        <h3>Highest Bidder Information</h3>
+        <p>
+            <strong>Name:</strong> @Model.Auction.BidderDto.CustomerDto.CustomerName
+        </p>
+        <p>
+            <strong>Email:</strong> @Model.Auction.BidderDto.CustomerDto.Email
+        </p>
+        <p>
+            <strong>Phone:</strong> @Model.Auction.BidderDto.CustomerDto.Phone
+        </p>
+    </div>
+    <div class="section">
+        <h3>Place a Bid</h3>
+        <form method="post">
+            <input asp-for="BidderAuction.AuctionId" value="@Model.Auction.AuctionID" />
+            <div>
+                <label for="CustomerId">Customer ID:</label>
+                <input asp-for="BidderAuction.CustomerId" name="CustomerId" required/>
+            </div>
+            <div>
+                <label for="BidPrice">Bid Price:</label>
+                <input asp-for="BidderAuction.CurrentBidPrice" name="CurrentBidPrice" step="0.01" required/>
+            </div>
+            <button type="submit">Submit Bid</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .auction-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .section {
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        flex: 1;
+        min-width: 300px;
+    }
+
+    .section h3 {
+        margin-top: 0;
+    }
+
+    form div {
+        margin-bottom: 10px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    input {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+
+    button {
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+</style>

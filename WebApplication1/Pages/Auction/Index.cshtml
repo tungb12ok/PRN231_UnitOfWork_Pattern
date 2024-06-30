@@ -1,0 +1,36 @@
+@page
+@model WebApplication1.Pages.Customers.Auction.IndexModel
+<h2>Auction Results</h2>
+
+@if (Model.AuctionResults != null && Model.AuctionResults.Count > 0)
+{
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Auction Result ID</th>
+            <th>Auction ID</th>
+            <th>Customer Name</th>
+            <th>Amount</th>
+            <th>Transaction Time</th>
+            <th>Final Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var result in Model.AuctionResults)
+        {
+            <tr>
+                <td>@result.AuctionResultId</td>
+                <td>@result.AuctionId</td>
+                <td>@result.Bidder.CustomerDto.CustomerName</td>
+                <td>@(result.Amount ?? 0)</td>
+                <td>@result.TransactionTime</td>
+                <td>@result.FinalPrice</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No auction results found.</p>
+}

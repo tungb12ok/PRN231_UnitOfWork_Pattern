@@ -5,16 +5,58 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using JewelryAuctionData.Enum;
+
 namespace JewelryAuctionBusiness
 {
     public class RequestAuctionBusiness
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public RequestAuctionBusiness(UnitOfWork unitOfWork)
+        public RequestAuctionBusiness(UnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
+        }
+
+        public async Task<IBusinessResult> GetAllRequestDetail()
+        {
+            try
+            {
+                var auctions = await _unitOfWork.RequestAuctionDetailsRepository.GetAllAsync();
+                var a = _mapper.Map<List<RequestAuctionDetailsDto>>(auctions);
+                if (auctions == null)
+                {
+                    return new BusinessResult(404, "No auction requests found.");
+                }
+
+                return new BusinessResult(200, "Successfully retrieved all auction requests.", a);
+            }
+            catch (Exception ex)
+            {
+                return new BusinessResult(500, $"Failed to retrieve auction requests: {ex.Message}");
+            }
+        }
+
+        public async Task<IBusinessResult> GetAllRequestDetailByKey(int key)
+        {
+            try
+            {
+                var auctions = await _unitOfWork.RequestAuctionDetailsRepository.GetByKeyAsync(key);
+                var a = _mapper.Map<RequestAuctionDetailsDto>(auctions);
+                if (auctions == null)
+                {
+                    return new BusinessResult(404, "No auction requests found.");
+                }
+
+                return new BusinessResult(200, "Successfully retrieved all auction requests.", a);
+            }
+            catch (Exception ex)
+            {
+                return new BusinessResult(500, $"Failed to retrieve auction requests: {ex.Message}");
+            }
         }
 
         public async Task<IBusinessResult> GetAllRequestAuctions()
@@ -22,19 +64,20 @@ namespace JewelryAuctionBusiness
             try
             {
                 var auctions = await _unitOfWork.RequestAuctionRepository.GetAllAsync();
-
-                if (auctions == null || auctions.Count == 0)
+                var a = _mapper.Map<List<RequestAuctionDTO>>(auctions);
+                if (auctions == null)
                 {
                     return new BusinessResult(404, "No auction requests found.");
                 }
 
-                return new BusinessResult(200, "Successfully retrieved all auction requests.", auctions);
+                return new BusinessResult(200, "Successfully retrieved all auction requests.", a);
             }
             catch (Exception ex)
             {
                 return new BusinessResult(500, $"Failed to retrieve auction requests: {ex.Message}");
             }
         }
+
         public async Task<IBusinessResult> CreateRequestAuction(RequestAuction requestAuction)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -47,10 +90,11 @@ namespace JewelryAuctionBusiness
             }
             catch (Exception ex)
             {
-                await _unitOfWork.RollbackTransactionAsync();
+                _unitOfWork.RollbackTransactionAsync();
                 return new BusinessResult(500, $"Failed to create auction request: {ex.Message}");
             }
         }
+
         public async Task<IBusinessResult> UpdateRequestAuction(RequestAuction requestAuction)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -71,14 +115,17 @@ namespace JewelryAuctionBusiness
                 _unitOfWork.RequestAuctionRepository.Update(existingAuction);
                 await _unitOfWork.CommitTransactionAsync();
 
-                return new BusinessResult(200, $"Auction request with ID {requestAuction.RequestId} updated successfully.");
+                return new BusinessResult(200,
+                    $"Auction request with ID {requestAuction.RequestId} updated successfully.");
             }
             catch (Exception ex)
             {
-                await _unitOfWork.RollbackTransactionAsync();
-                return new BusinessResult(500, $"Failed to update auction request with ID {requestAuction.RequestId}: {ex.Message}");
+                 _unitOfWork.RollbackTransactionAsync();
+                return new BusinessResult(500,
+                    $"Failed to update auction request with ID {requestAuction.RequestId}: {ex.Message}");
             }
         }
+
         public async Task<IBusinessResult> DeleteRequestAuction(int requestId)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -98,16 +145,18 @@ namespace JewelryAuctionBusiness
             }
             catch (Exception ex)
             {
-                await _unitOfWork.RollbackTransactionAsync();
+                _unitOfWork.RollbackTransactionAsync();
                 return new BusinessResult(500, $"Failed to delete auction request with ID {requestId}: {ex.Message}");
             }
         }
+
         public async Task<IBusinessResult> ApproveRequestAuction(RequestAuctionDetailsDto detailsDto, bool approve)
         {
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                var requestDetails = await _unitOfWork.RequestAuctionDetailsRepository.GetByIdAsync(detailsDto.RequestDetailID);
+                var requestDetails =
+                    await _unitOfWork.RequestAuctionDetailsRepository.GetByIdAsync(detailsDto.RequestDetailID);
                 if (requestDetails == null)
                 {
                     return new BusinessResult
@@ -138,13 +187,15 @@ namespace JewelryAuctionBusiness
                 return new BusinessResult
                 {
                     Status = 200,
-                    Message = approve ? "Request auction approved successfully." : "Request auction rejected successfully.",
+                    Message = approve
+                        ? "Request auction approved successfully."
+                        : "Request auction rejected successfully.",
                     Data = requestDetails
                 };
             }
             catch (Exception ex)
             {
-                await _unitOfWork.RollbackTransactionAsync();
+                _unitOfWork.RollbackTransactionAsync();
                 return new BusinessResult
                 {
                     Status = 500,
@@ -152,6 +203,7 @@ namespace JewelryAuctionBusiness
                 };
             }
         }
+
         public async Task<IBusinessResult> UpdateRequestAuctionDetails(RequestAuctionDetailsDto detailsDto)
         {
             // Example business logic for updating an auction request detail
@@ -170,16 +222,18 @@ namespace JewelryAuctionBusiness
 
             return new BusinessResult { Status = 200, Message = "Details updated successfully.", Data = details };
         }
-        public async Task<IBusinessResult> CreateJewelryAndRequestAuction(JewelryDTO jewelryDto, int customerId)
+
+        public async Task<IBusinessResult> CreateJewelryAndRequestAuction(CreateJewelryAndAuctionDto jewelryDto,
+            int customerId)
         {
-            await _unitOfWork.BeginTransactionAsync();
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 // Create a new Jewelry item from the DTO
                 var jewelry = new Jewelry
                 {
                     JewelryName = jewelryDto.JewelryName,
-                    Discription = jewelryDto.Description
+                    Discription = jewelryDto.Discription
                 };
 
                 _unitOfWork.JewelryRepository.Create(jewelry);
@@ -190,8 +244,17 @@ namespace JewelryAuctionBusiness
                     JewelryId = jewelry.JewelryId,
                     CustomerId = customerId
                 };
-
                 _unitOfWork.RequestAuctionRepository.Create(requestAuction);
+                var requsetDetail = new RequestAuctionDetail()
+                {
+                    RequestId = requestAuction.RequestId,
+                    CustomerId = customerId,
+                    JewelryId = jewelry.JewelryId,
+                    Quantity = jewelryDto.Quantity,
+                    Price = jewelryDto.Price,
+                    Status = AuctionStatusEnum.Pending.ToString()
+                };
+                _unitOfWork.RequestAuctionDetailsRepository.Create(requsetDetail);
                 await _unitOfWork.CommitTransactionAsync();
 
                 return new BusinessResult
@@ -203,7 +266,7 @@ namespace JewelryAuctionBusiness
             }
             catch (Exception ex)
             {
-                await _unitOfWork.RollbackTransactionAsync();
+                _unitOfWork.RollbackTransactionAsync();
                 return new BusinessResult
                 {
                     Status = 500,
@@ -211,6 +274,7 @@ namespace JewelryAuctionBusiness
                 };
             }
         }
+
         public async Task<IBusinessResult> GetRequestAuctionById(int key)
         {
             try
@@ -229,6 +293,56 @@ namespace JewelryAuctionBusiness
                 return new BusinessResult(500, $"Failed to retrieve auction requests: {ex.Message}");
             }
         }
-        
+
+        public async Task<IBusinessResult> UpdateRequestAuctionDetailsStatus(int key, string status)
+        {
+            if (!IsValidStatus(status))
+            {
+                return new BusinessResult
+                {
+                    Status = 400,
+                    Message = "Invalid status. Status must be one of the following values: Pending, Approved, Rejected."
+                };
+            }
+
+            try
+            {
+                await _unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
+                var details = await _unitOfWork.RequestAuctionDetailsRepository.GetByIdAsync(key);
+                if (details == null)
+                {
+                    return new BusinessResult
+                    {
+                        Status = 404,
+                        Message = "Request details not found."
+                    };
+                }
+                details.Status = status;
+                _unitOfWork.RequestAuctionDetailsRepository.Update(details);
+                await _unitOfWork.CommitTransactionAsync();
+
+                return new BusinessResult
+                {
+                    Status = 200,
+                    Message = "Details updated successfully.",
+                    Data = details
+                };
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.RollbackTransactionAsync();
+                return new BusinessResult
+                {
+                    Status = 500,
+                    Message = $"Details update failed: {ex.Message}"
+                };
+            }
+        }
+
+        private bool IsValidStatus(string status)
+        {
+            var validStatuses = new[] { "Pending", "Approved", "Rejected" };
+            return validStatuses.Contains(status);
+        }
     }
 }

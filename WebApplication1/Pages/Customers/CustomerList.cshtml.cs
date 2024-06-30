@@ -18,11 +18,9 @@ namespace WebApplication1.Pages.Customers
 
         public List<CustomerVM> Customers { get; set; } = new List<CustomerVM>();
 
-        [BindProperty]
-        public CustomerVM CustomerVM { get; set; }
+        [BindProperty] public CustomerRegistrationViewModel NewCustomer { get; set; }
 
-        [BindProperty]
-        public CustomerVM NewCustomer { get; set; }
+        [BindProperty] public CustomerVM CustomerVM { get; set; }
 
         public List<SelectListItem> Companies { get; set; } = new List<SelectListItem>();
 
@@ -40,7 +38,8 @@ namespace WebApplication1.Pages.Customers
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
-                var oDataResponse = JsonSerializer.Deserialize<ODataResponse<CustomerVM>>(jsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var oDataResponse = JsonSerializer.Deserialize<ODataResponse<CustomerVM>>(jsonString,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 if (oDataResponse != null)
                 {
                     Customers = oDataResponse.Value;
@@ -51,31 +50,36 @@ namespace WebApplication1.Pages.Customers
         private async Task LoadCompaniesAsync()
         {
             var httpClient = _clientFactory.CreateClient("MyApi");
-            var response = await httpClient.GetStringAsync("Companies");
 
-            var companiesJson = JsonDocument.Parse(response);
-            var companies = companiesJson.RootElement.GetProperty("$values").EnumerateArray()
-                .Select(company => new CompanyVM
-                {
-                    CompanyId = company.GetProperty("companyId").GetInt32(),
-                    CompanyName = company.GetProperty("companyName").GetString()
-                }).ToList();
-
-            Companies = companies.Select(c => new SelectListItem
+            try
             {
-                Value = c.CompanyId.ToString(),
-                Text = c.CompanyName
-            }).ToList();
+                var response = await httpClient.GetFromJsonAsync<ODataResponse<CompanyVM>>("odata/Companies");
+
+                if (response != null)
+                {
+                    Companies = response.Value.Select(c => new SelectListItem
+                    {
+                        Value = c.CompanyId.ToString(),
+                        Text = c.CompanyName
+                    }).ToList();
+                }
+                else
+                {
+                    Companies = new List<SelectListItem>();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                Companies = new List<SelectListItem>();
+            }
         }
+
 
         public async Task<IActionResult> OnPostCreateAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                await LoadCompaniesAsync();
-                await LoadCustomersAsync();
-                return Page();
-            }
+            await LoadCompaniesAsync();
+            await LoadCustomersAsync();
 
             var httpClient = _clientFactory.CreateClient("MyApi");
             var response = await httpClient.PostAsJsonAsync("odata/Customers", NewCustomer);
@@ -86,20 +90,14 @@ namespace WebApplication1.Pages.Customers
             }
 
             ModelState.AddModelError(string.Empty, "Failed to create customer.");
-            await LoadCompaniesAsync();
-            await LoadCustomersAsync();
+
             return Page();
         }
 
         public async Task<IActionResult> OnPostUpdateAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                await LoadCompaniesAsync();
-                await LoadCustomersAsync();
-                return Page();
-            }
-
+            await LoadCompaniesAsync();
+            await LoadCustomersAsync();
             var httpClient = _clientFactory.CreateClient("MyApi");
             var response = await httpClient.PutAsJsonAsync($"odata/Customers({CustomerVM.CustomerId})", CustomerVM);
 
@@ -109,8 +107,6 @@ namespace WebApplication1.Pages.Customers
             }
 
             ModelState.AddModelError(string.Empty, "Failed to update customer.");
-            await LoadCompaniesAsync();
-            await LoadCustomersAsync();
             return Page();
         }
 
