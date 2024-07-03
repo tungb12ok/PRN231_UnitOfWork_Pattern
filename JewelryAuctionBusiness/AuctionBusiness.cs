@@ -23,11 +23,11 @@ namespace JewelryAuctionBusiness
         }
 
         // Thêm phiên đấu giá mới
-        public async Task<IBusinessResult> CreateAuctionSection(AuctionSectionDto auctionSectionDto)
+        public async Task<IBusinessResult> CreateAuctionSection(AuctionSectionUpdateDto auctionSectionDto)
         {
             var auctionSection = _mapper.Map<AuctionSection>(auctionSectionDto);
-
-            _unitOfWork.AuctionSectionRepository.Create(auctionSection);
+            await _unitOfWork.BeginTransactionAsync();
+            await _unitOfWork.AuctionSectionRepository.CreateAsync(auctionSection);
             await _unitOfWork.CommitTransactionAsync();
 
             var resultDto = _mapper.Map<AuctionSectionDto>(auctionSection);

@@ -16,31 +16,32 @@ public class BidderBusiness
 
     public async Task<IBusinessResult> PlaceBid(BidderAuction bidderDto)
     {
-        await _unitOfWork.BeginTransactionAsync();
-
-        int auctionId = bidderDto.AuctionId;
-        decimal newBidAmount = bidderDto.CurrentBidPrice ?? 0;
-
-        // Retrieve auction section
-        var auctionSection = await _unitOfWork.AuctionSectionRepository.GetByIdAsync(auctionId);
-
-        if (auctionSection == null || auctionSection.EndTime < DateTime.Now || auctionSection.Status != "Active")
-        {
-            return new BusinessResult(400, "Auction is not active or does not exist.");
-        }
-
-        if (newBidAmount <= auctionSection.InitialPrice)
-        {
-            return new BusinessResult(400, "New bid must be higher than the Initial Price.");
-        }
-
-        if (auctionSection.Bidder != null && newBidAmount <= auctionSection.Bidder.CurrentBidPrice)
-        {
-            return new BusinessResult(400, "New bid must be higher than the current highest bid.");
-        }
-
         try
         {
+            await _unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
+
+            int auctionId = bidderDto.AuctionId;
+            decimal newBidAmount = bidderDto.CurrentBidPrice ?? 0;
+
+            // Retrieve auction section
+            var auctionSection = await _unitOfWork.AuctionSectionRepository.GetByIdAsync(auctionId).ConfigureAwait(false);
+
+            if (auctionSection == null || auctionSection.EndTime < DateTime.Now || auctionSection.Status != "Active")
+            {
+                return new BusinessResult(400, "Auction is not active or does not exist.");
+            }
+
+            if (newBidAmount <= auctionSection.InitialPrice)
+            {
+                return new BusinessResult(400, "New bid must be higher than the Initial Price.");
+            }
+
+            if (auctionSection.Bidder != null && newBidAmount <= auctionSection.Bidder.CurrentBidPrice)
+            {
+                return new BusinessResult(400, "New bid must be higher than the current highest bid.");
+            }
+
+
             // Create new bidder record
             var bidder = new Bidder
             {
@@ -49,11 +50,10 @@ public class BidderBusiness
             };
 
             await _unitOfWork.BidderRepository.CreateAsync(bidder);
-            await _unitOfWork.CommitTransactionAsync(); 
-
-            auctionSection.BidderId = bidder.BidderId; 
+             var bidderId = await _unitOfWork.BidderRepository.GetLastAsync();
+            auctionSection.BidderId = bidderId;
             auctionSection.InitialPrice = newBidAmount;
-            _unitOfWork.AuctionSectionRepository.Update(auctionSection);
+            await _unitOfWork.AuctionSectionRepository.UpdateAsync(auctionSection).ConfigureAwait(false);
 
             await _unitOfWork.CommitTransactionAsync();
             return new BusinessResult(200, "Bid placed successfully.");
@@ -75,6 +75,7 @@ public class BidderBusiness
             {
                 return new BusinessResult(404, "Auction section not found.");
             }
+
             return new BusinessResult(200, "Auction section retrieved successfully.", bidderCustomer);
         }
         catch (Exception ex)
@@ -82,6 +83,7 @@ public class BidderBusiness
             return new BusinessResult(500, $"Failed to retrieve auction section: {ex.Message}");
         }
     }
+
     public async Task<IBusinessResult> RecordAuctionResult(int auctionId)
     {
         var auctionSection = await _unitOfWork.AuctionSectionRepository.GetByIdAsync(auctionId);

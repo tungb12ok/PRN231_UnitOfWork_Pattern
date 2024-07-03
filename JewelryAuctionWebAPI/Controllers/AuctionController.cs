@@ -32,7 +32,7 @@ namespace JewelryAuctionWebAPI.Controllers
             return GenerateActionResult(result);
         }
 
-        public async Task<IActionResult> Post([FromBody] AuctionSectionDto auctionSectionDto)
+        public async Task<IActionResult> Post([FromBody] AuctionSectionUpdateDto auctionSectionDto)
         {
             var result = await _auctionBusiness.CreateAuctionSection(auctionSectionDto);
             return GenerateActionResult(result);

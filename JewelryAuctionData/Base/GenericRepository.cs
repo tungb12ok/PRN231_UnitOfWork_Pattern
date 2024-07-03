@@ -25,10 +25,12 @@ namespace BadmintonReservationData.Base
         {
             return _dbSet.ToList();
         }
+
         public async Task<List<T>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
         }
+
         public void Create(T entity)
         {
             _dbSet.Add(entity);
@@ -56,6 +58,17 @@ namespace BadmintonReservationData.Base
         }
 
         public T Update(T entity)
+        {
+            if (!this._unitOfWork.IsTransaction)
+            {
+                throw new InvalidOperationException(ErrorMessage);
+            }
+
+            this._dbSet.Attach(entity);
+            return entity;
+        }
+
+        public async Task<T> UpdateAsync(T entity)
         {
             if (!this._unitOfWork.IsTransaction)
             {

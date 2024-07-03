@@ -1,3 +1,5 @@
+using WebApplication1.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -8,7 +10,7 @@ builder.Services.AddHttpClient("MyApi", client =>
     client.BaseAddress = new Uri("http://localhost:5000/"); // Your API URL
 });
 
-
+builder.Services.AddHttpClient<AuctionService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

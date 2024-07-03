@@ -1,0 +1,40 @@
+@page
+@model WebApplication1.Pages.Admin.Auctions.CreateModel
+
+<h2>Create Auction</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="Auction.JewelryID" class="control-label"></label>
+        <select asp-for="Auction.JewelryID" class="form-control" asp-items="Model.JewelryItems"></select>
+        <span asp-validation-for="Auction.JewelryID" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Auction.StartTime" class="control-label"></label>
+        <input asp-for="Auction.StartTime" class="form-control" />
+        <span asp-validation-for="Auction.StartTime" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Auction.EndTime" class="control-label"></label>
+        <input asp-for="Auction.EndTime" class="form-control" />
+        <span asp-validation-for="Auction.EndTime" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Auction.Description" class="control-label"></label>
+        <input asp-for="Auction.Description" class="form-control" />
+        <span asp-validation-for="Auction.Description" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Auction.InitialPrice" class="control-label"></label>
+        <input asp-for="Auction.InitialPrice" class="form-control" />
+        <span asp-validation-for="Auction.InitialPrice" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Auction.RequestDetailID" class="control-label"></label>
+        <input asp-for="Auction.RequestDetailID" class="form-control" />
+        <span asp-validation-for="Auction.RequestDetailID" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+</form>

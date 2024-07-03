@@ -83,7 +83,7 @@ namespace JewelryAuctionData
                 throw new Exception(ErrorNotOpenTransaction);
             }
 
-            await this._context.SaveChangesAsync().ConfigureAwait(false);
+            await this._context.SaveChangesAsync();
             this.isTransaction = false;
         }
 

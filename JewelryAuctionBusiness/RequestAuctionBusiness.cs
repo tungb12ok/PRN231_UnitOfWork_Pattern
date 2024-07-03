@@ -180,7 +180,6 @@ namespace JewelryAuctionBusiness
                 // Update other details as needed
                 requestDetails.Quantity = detailsDto.Quantity;
                 requestDetails.Price = detailsDto.Price;
-
                 _unitOfWork.RequestAuctionDetailsRepository.Update(requestDetails);
                 await _unitOfWork.CommitTransactionAsync();
 

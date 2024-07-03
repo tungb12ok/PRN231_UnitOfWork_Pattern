@@ -1,0 +1,32 @@
+@page
+@model WebApplication1.Pages.AuctionResults.IndexModel
+
+<h2>Auction Results</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Auction ID</th>
+        <th>Bidder ID</th>
+        <th>Amount</th>
+        <th>Transaction Time</th>
+        <th>Final Price</th>
+        <th>Details</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var auction in Model.AuctionResults)
+    {
+        <tr>
+            <td>@auction.AuctionId</td>
+            <td>@auction.BidderId</td>
+            <td>@auction.Amount</td>
+            <td>@auction.TransactionTime</td>
+            <td>@auction.FinalPrice</td>
+            <td>
+                <a href="https://localhost:7080/AuctionResults/AuctionResults?id=@auction.AuctionId">View Details</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

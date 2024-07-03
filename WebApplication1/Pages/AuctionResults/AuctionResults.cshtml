@@ -1,0 +1,41 @@
+@page
+@model WebApplication1.Pages.AuctionResults.AuctionResultsModel
+
+<h2>Auction Details</h2>
+@if (Model.AuctionResult != null)
+{
+    <table class="table">
+        <tr>
+            <th>Auction ID</th>
+            <td>@Model.AuctionResult.AuctionId</td>
+        </tr>
+        <tr>
+            <th>Bidder ID</th>
+            <td>@Model.AuctionResult.Bidder.BidderId</td>
+        </tr>
+        <tr>
+            <th>Transaction Time</th>
+            <td>@Model.AuctionResult.TransactionTime</td>
+        </tr>
+        <tr>
+            <th>Final Price</th>
+            <td>@Model.AuctionResult.FinalPrice</td>
+        </tr>
+        <tr>
+            <th>Customer Name</th>
+            <td>@Model.AuctionResult.Bidder.CustomerDto.CustomerName</td>
+        </tr>
+        <tr>
+            <th>Phone</th>
+            <td>@Model.AuctionResult.Bidder.CustomerDto.Phone</td>
+        </tr>
+        <tr>
+            <th>Email</th>
+            <td>@Model.AuctionResult.Bidder.CustomerDto.Email</td>
+        </tr>
+    </table>
+}
+else
+{
+    <p>No auction details available.</p>
+}
